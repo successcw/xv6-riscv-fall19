@@ -89,3 +89,33 @@ sys_uptime(void)
   release(&tickslock);
   return xticks;
 }
+
+void walk_pt(pagetable_t pagetable, int level)
+{
+  pagetable_t pagetable_temp;
+  for (int i = 0; i < 512; i++) {
+      pte_t *pte = &pagetable[i];
+      if (*pte & PTE_V) {
+          printf("PTE level:%d index:%d\n", level, i);
+          if (level == 0){
+              printf("PTE addr:%p\n", PTE2PA(*pte));
+              continue;
+          } else {
+              pagetable_temp = (pagetable_t)PTE2PA(*pte);
+              walk_pt(pagetable_temp, level-1);
+          }
+      }
+  }
+}
+
+uint64
+sys_getpt(void)
+{
+  struct proc *p = myproc();
+  printf("PID: %d name: %s pt:%p\n",
+          p->pid, p->name, p->pagetable);
+  printf("satp:%p\n", r_satp());
+  printf("kernel pagetable:%p\n", p->tf->kernel_satp);
+  walk_pt(p->pagetable, 2);
+  return 0;
+}

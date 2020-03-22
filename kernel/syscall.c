@@ -107,6 +107,7 @@ extern uint64 sys_write(void);
 extern uint64 sys_uptime(void);
 extern uint64 sys_ntas(void);
 extern uint64 sys_crash(void);
+extern uint64 sys_getpt(void);
 
 static uint64 (*syscalls[])(void) = {
 [SYS_fork]    sys_fork,
@@ -132,6 +133,7 @@ static uint64 (*syscalls[])(void) = {
 [SYS_close]   sys_close,
 [SYS_ntas]    sys_ntas,
 [SYS_crash]   sys_crash,
+[SYS_getpt]   sys_getpt,
 };
 
 void
